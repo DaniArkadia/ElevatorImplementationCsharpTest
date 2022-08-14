@@ -7,21 +7,21 @@ public class ElevatorCallButton : MonoBehaviour, IInteractable
 {
    public bool isPressed { get; private set; }
 
-   [SerializeField] int floorNumber;
-   [SerializeField] GameObject buttonLight;
-   [SerializeField] Elevator connectedElevator;
-   [SerializeField] ElevatorStopRequest.RequestDirection requestDirection;
+   [SerializeField] protected int floorNumber;
+   [SerializeField] protected GameObject buttonLight;
+   [SerializeField] protected Elevator connectedElevator;
+   [SerializeField] protected ElevatorStopRequest.RequestDirection requestDirection;
 
+   protected ElevatorStop stop;
    MonoTimer toggleTimer;
 
-   ElevatorStop stop;
 
    // If the button wasn't already pressed, sends a stop request to the connectElevator.
    public void OnInteract()
    {
       if (isPressed) return;
-
-      if (connectedElevator.TryRequestStop(new ElevatorStopRequest(requestDirection, stop, this)))
+      var request = GenerateRequest();
+      if (connectedElevator.TryRequestStop(request))
       {
          if (toggleTimer != null)
          {
@@ -36,13 +36,20 @@ public class ElevatorCallButton : MonoBehaviour, IInteractable
       }
    }
 
+   /* The OnInteract method will most likely be the same for all ElevatorCallButtons therefore I chose to just use polymorphism 
+   to the creation of the request in order to get the desired difference in behaviour amongst subclasses*/
+   public virtual ElevatorStopRequest GenerateRequest()
+   {
+      return new ElevatorStopRequest(requestDirection, stop, this);
+   }
+
    // This lets us link a callback to when our request is finished being handled.
-   internal void LinkToRequest(ElevatorStopRequest request)
+   public void LinkToRequest(ElevatorStopRequest request)
    {
       request.onRequestFulfilled += OnRequestFulfilled;
    }
 
-   internal void OnRequestFulfilled()
+   protected void OnRequestFulfilled()
    {
       ToggleButton(false);
    }
@@ -50,11 +57,15 @@ public class ElevatorCallButton : MonoBehaviour, IInteractable
    // Finds the corrosponding ElevatorStop from the connectedElevator using the floorNumber.
    void Awake()
    {
+      OnAwake();
       stop = connectedElevator.GetConnectedStop(floorNumber);
    }
 
+   // I provide an easy way to execute something within the Awake method while keeping the base code for getting the connected stop intact.
+   protected virtual void OnAwake() { }
+
    // Toggles the buttons state.
-   void ToggleButton(bool toggle)
+   protected virtual void ToggleButton(bool toggle)
    {
       isPressed = toggle;
       buttonLight.SetActive(toggle);

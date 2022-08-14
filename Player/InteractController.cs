@@ -15,7 +15,7 @@ public class InteractController : MonoBehaviour
 
    void Update()
    {
-      if (Input.GetMouseButton(0))
+      if (Input.GetMouseButtonDown(0))
       {
          RaycastHit hit;
          if (Physics.Raycast(currentCamera.ScreenPointToRay(Input.mousePosition), out hit, 100, ~0, QueryTriggerInteraction.Collide))

@@ -8,22 +8,21 @@ using UnityEngine;
 public class ElevatorStop : ISerializationCallbackReceiver
 {
    [HideInInspector] public string name;
-   public enum DoorDirection { front, rear }
 
    public Transform stopTransform;
    public event Action onStopReached;
 
    [SerializeField] int floorNumber;
-   [SerializeField] DoorDirection doorDirection;
-   [SerializeField] ElevatorDoors doorsOuter;
+   ElevatorDoors doorsOuter;
 
+   public void Init()
+   {
+      doorsOuter = stopTransform.GetComponentInChildren<ElevatorDoors>();
+   }
+ 
    public int GetFloorNumber()
    {
       return floorNumber;
-   }
-   public DoorDirection GetDoorDirection()
-   {
-      return doorDirection;
    }
 
    public void OnStopReached(Action onDoorsOpen = null)
@@ -32,7 +31,7 @@ public class ElevatorStop : ISerializationCallbackReceiver
       doorsOuter.Open(onDoorsOpen);
    }
 
-   internal void OnDoorsTimedOut()
+   public void OnDoorsTimedOut()
    {
       doorsOuter.Close();
    }
@@ -42,6 +41,5 @@ public class ElevatorStop : ISerializationCallbackReceiver
    {
       name = "Floor: " + floorNumber;
    }
-
    public void OnAfterDeserialize() { }
 }

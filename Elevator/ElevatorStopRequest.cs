@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ElevatorStopRequest
 {
-   public enum RequestDirection { up, down };
+   public enum RequestDirection { up, down, none };
 
    // Whether the client wishes to travel to a higher or lower level.
    public RequestDirection direction { get; private set; }

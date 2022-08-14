@@ -124,5 +124,7 @@ public sealed class Elevator : MonoBehaviour
    {
       elevatorOperator = new ElevatorOperator(transform);
       doors = GetComponentInChildren<ElevatorDoors>();
+      availableStops.ForEach((s) => s.Init());
    }
+
 }
