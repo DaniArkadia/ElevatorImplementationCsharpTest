@@ -1,9 +1,7 @@
 using System;
-using System.Threading;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
+/* I chose to encapsulate requests in this class as it made sense to me to pass around the requests as an entire object,
+rather than passing a load of arguments around.*/
 public class ElevatorStopRequest
 {
    public enum RequestDirection { up, down, none };
@@ -13,6 +11,7 @@ public class ElevatorStopRequest
    public ElevatorStop requestedStop { get; private set; }
    public ElevatorCallButton source { get; private set; }
 
+   // Buttons and whatever else can hook into this, it gets invoked when the request has been fulfilled.
    public event Action onRequestFulfilled;
 
    public ElevatorStopRequest(RequestDirection direction, ElevatorStop requestedStop, ElevatorCallButton requestSource)
@@ -26,7 +25,6 @@ public class ElevatorStopRequest
    {
       onRequestFulfilled = null;
    }
-
    public void OnFulfillRequest()
    {
       onRequestFulfilled?.Invoke();

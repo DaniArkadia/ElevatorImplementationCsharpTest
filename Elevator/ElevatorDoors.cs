@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Playables;
 
-
 /* This mono has a simple way for the elevator doors to open and close and invoke callbacks at the end of each task
 I made this for convenience and isn't necessarily how I would handle this normally, I did it this way as I know 
 the focus of this shouldn't be on the unity specific stuff. */
@@ -47,5 +46,15 @@ public class ElevatorDoors : MonoBehaviour
       isBusy = false;
       onFinishedCallback?.Invoke();
       yield return null;
+   }
+
+   internal bool AreFullyClosed()
+   {
+      return director.playableAsset == closeTimeline && !isBusy;
+   }
+
+   internal bool AreFullyOpen()
+   {
+      return director.playableAsset == openTimeline && !isBusy;
    }
 }

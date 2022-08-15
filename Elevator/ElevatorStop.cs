@@ -1,8 +1,9 @@
 using System;
-using System.Threading;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+/* This class encapsulates everything related to the an elevator stop, I chose to not make this a MonoBehaviour;
+the main reason for this was that it made it easier to display and setup the list of ElevatorStops in the 
+Elevator class's inspector. */
 
 [Serializable]
 public class ElevatorStop : ISerializationCallbackReceiver
@@ -14,7 +15,6 @@ public class ElevatorStop : ISerializationCallbackReceiver
 
    [SerializeField] int floorNumber;
    ElevatorDoors doorsOuter;
-
    public void Init()
    {
       doorsOuter = stopTransform.GetComponentInChildren<ElevatorDoors>();

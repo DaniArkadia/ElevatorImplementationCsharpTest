@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 /* This ElevatorOperator will alternate between moving up and moving down, unfortunately I ran out of time before this Operator could be completed,

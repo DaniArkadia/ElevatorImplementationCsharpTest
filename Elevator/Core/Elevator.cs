@@ -17,11 +17,16 @@ public sealed class Elevator : MonoBehaviour
 
    // C# Components
    [SerializeField] ElevatorMovement elevatorMovement;
+   
+   [Header("Sound")]
+   [SerializeField] AudioClip music;
+   [SerializeField] AudioClip floorReachedSound;
 
    ElevatorOperator elevatorOperator; 
 
    // The doors attached to the elevator.
    ElevatorDoors doors;
+   AudioSource speaker;
 
    ElevatorStop previousStop;
    ElevatorStop currentStop;
@@ -59,6 +64,42 @@ public sealed class Elevator : MonoBehaviour
       return elevatorOperator.TryHandleElevatorRequest(request);
    }
 
+   /* Called by certain ElevatorDoorButtons, the elevator is moving we ignore this request, and we check that the doors
+   Are actually closed before we try to open them. */
+   public bool TryRequestOpenDoors()
+   {
+      if (elevatorOperator.HasActiveRequests()) return false;
+      if (doors.AreFullyClosed())
+      {
+         OnOpenSameFloor();
+         return true;
+      }
+      return false;
+   }
+
+   /* Similar to the method above but handles closing instead, these could be squashed into one method to reduce repetition,
+   but in this case I feel like keeping them seperated makes way more sense for readability.*/
+   public bool TryRequestCloseDoors()
+   {
+      if (doors.AreFullyOpen() && currentStop != null)
+      {
+         ForceCloseDoors();
+         return true;
+      }
+      return false;
+   }
+   
+   void ForceCloseDoors()
+   {
+      isBusy = true;
+      if (doorCloseTimer != null)
+      {
+         doorCloseTimer.Cancel();
+      }
+      currentStop.OnDoorsTimedOut();
+      doors.Close(() => isBusy = false);
+   }
+
    void Update()
    {
       // Is busy is a flag that is true when the elevator doors are open, this stops the elevator from moving prematurely.
@@ -94,6 +135,7 @@ public sealed class Elevator : MonoBehaviour
       currentStop = finishedRequest.requestedStop;
       currentStop.OnStopReached();
       doors.Open(() => doorCloseTimer = Timing.DelayForSeconds(5f, OnWaitingTimedOut));
+      speaker.PlayOneShot(floorReachedSound);
    }
 
    // Opens the doors, sets the isBusy flag to true, then closes the doors and sets the isBusy flag back to false.
@@ -124,6 +166,9 @@ public sealed class Elevator : MonoBehaviour
    {
       elevatorOperator = new ElevatorOperator(transform);
       doors = GetComponentInChildren<ElevatorDoors>();
+      speaker = GetComponentInChildren<AudioSource>();
+      speaker.clip = music;
+      speaker.Play();
       availableStops.ForEach((s) => s.Init());
    }
 

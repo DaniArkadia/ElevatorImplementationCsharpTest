@@ -1,8 +1,3 @@
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 // This component handles all the actual movement of the elevator, it's pretty dumb on it's own and doesn't know much about what's going out outside.
@@ -11,7 +6,6 @@ public class ElevatorMovement
 {
    [SerializeField] float speed = 5f;
    [SerializeField] float lerpSpeedFactor = 3f;
- 
 
    // Moves elevator towards stop and returns true once it has reached there.
    public bool MoveToStop(Transform transform, ElevatorStop stop)
